@@ -1,9 +1,12 @@
 import { createStore } from "redux"
 import {composeWithDevTools} from '@redux-devtools/extension'  
+import { thunk } from 'redux-thunk'   
+import { applyMiddleware } from "redux" 
 
 
 const ADD_TASK = 'task/add'
-const DELETE_TASK = 'task/delete'   
+const DELETE_TASK = 'task/delete'
+const FETCH_TASK = 'task/fetch'   
 const initialState = {
     tasks: [],  
 }
@@ -23,6 +26,11 @@ const taskReducer = (state = initialState, action) => {
                 ...state,
                 tasks:updatedTasks
             }
+            case FETCH_TASK:
+                return{
+                    ...state,
+                    tasks:[...state.tasks,...action.payload]  
+                }
         default:
             return state   
     }
@@ -30,7 +38,7 @@ const taskReducer = (state = initialState, action) => {
 
 // create store
 
-export const store = createStore(taskReducer,composeWithDevTools())   
+export const store = createStore(taskReducer,composeWithDevTools(applyMiddleware(thunk)))      
 
 // Subscribe to store changes
 // store.subscribe(() => {
@@ -50,7 +58,22 @@ export const deleteTask = (id) => {
         type: DELETE_TASK,
         payload: id
     }
-}   
+}  
+
+export const FetchTask = () => {
+    return async (dispatch) => {
+        try {
+            const res = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=3')
+            const data = await res.json()
+            dispatch({
+                type: FETCH_TASK,
+                payload: data.map((todo) => todo.title) // Changed 'tasks' to 'data'
+            })
+        } catch (error) {
+            console.error('Error fetching tasks:', error)
+        }
+    }
+}
 
 
 

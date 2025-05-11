@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector,useDispatch} from 'react-redux'
 import { useState } from 'react'    
 import { MdDeleteForever } from 'react-icons/md'
-import { addTask, deleteTask } from '../store.jsx'  // Importing action creators 
+import { addTask, deleteTask,FetchTask } from '../store.jsx'  // Importing action creators 
 
 
 export const Todo = () => {
@@ -13,11 +13,17 @@ export const Todo = () => {
 
     const handleSubmit = (e) =>{
         e.preventDefault()
-        return dispatch(addTask(task))
+        dispatch(addTask(task))
+        return setTask('')
     }
     const handleTaskDelete = (index) => {
         return dispatch(deleteTask(index))
-    }   
+    }
+    
+    const handleFetchtask = () => {
+        return dispatch(FetchTask())
+    }
+
 
   return (
     <div className='container'>
@@ -34,6 +40,7 @@ export const Todo = () => {
                     <button>Add Task</button>
                 </form>
             </div>
+                <button onClick={handleFetchtask}>Fetch Task</button>
             <ul id="list-container">
                 {
                     tasks.map((curtask,index) =>{
